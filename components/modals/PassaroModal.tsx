@@ -4,16 +4,17 @@ import { useState } from "react";
 
 export type PassaroModalProps = {
     visivel: boolean;
-    onAdd: (apelido: string, especie: string, anilha: string, idade: number, sexo: string) => void;
-    onCancel: () => void;
+    adicionar: (apelido: string, especie: string, anilha: string, sexo: string, idade: number, id_gaiola: number) => void;
+    cancelar: () => void;
 };
 
-export default function PassaroModal({visivel, onAdd, onCancel}: PassaroModalProps) {
+export default function PassaroModal({visivel, adicionar, cancelar}: PassaroModalProps) {
     const [apelido, setApelido] = useState('');
     const [especie, setEspecie] = useState('');
     const [anilha, setAnilha] = useState('');
     const [idade, setIdade] = useState('');
     const [sexo, setSexo] = useState('');
+    const [id_gaiola, setIdGaiola] = useState('');
 
   return (
     <Modal visible={visivel} animationType='fade' transparent={true} onRequestClose={() => {}}>
@@ -53,15 +54,22 @@ export default function PassaroModal({visivel, onAdd, onCancel}: PassaroModalPro
             onChangeText={text => setSexo(text)}
             placeholder='Sexo'
           />
+          <TextInput
+            style={styles.boxInput}
+            value={id_gaiola}
+            onChangeText={text => setIdGaiola(text)}
+            placeholder='Gaiola'
+            keyboardType="numeric"
+          />
 
           <View style={styles.buttonContainer}>
-            <TouchableOpacity style={styles.buttonAdd} onPress={() => onAdd(apelido, especie, anilha, Number(idade), sexo)}>
+            <TouchableOpacity style={styles.buttonAdd} onPress={() => adicionar(apelido, especie, anilha, sexo, Number(idade), Number(id_gaiola))}>
               <Text style={styles.buttonText}>
                 Add
               </Text>
             </TouchableOpacity>
             
-            <TouchableOpacity style={styles.buttonCancel} onPress={() => onCancel()}>
+            <TouchableOpacity style={styles.buttonCancel} onPress={() => cancelar()}>
               <Text style={styles.buttonText}>
                 Cancel
               </Text>
