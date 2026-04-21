@@ -9,11 +9,11 @@ import Animated, {
 
 import { ThemedView } from '@/components/themed-view';
 
-const HEADER_HEIGHT = 250; // define a altura fixa do cabeçalho 
+const HEADER_HEIGHT = 250; 
 
 type Props = PropsWithChildren<{
-  headerImage?: ReactElement; // uma imagem opcional para o topo
-  headerBackgroundColor: { dark: string; light: string }; // cores de fundo para os temas claro e escuro
+  headerImage?: ReactElement; 
+  headerBackgroundColor: { dark: string; light: string }; 
 }>;
 
 export default function MyScrollView({children, headerImage, headerBackgroundColor,}: Props) {

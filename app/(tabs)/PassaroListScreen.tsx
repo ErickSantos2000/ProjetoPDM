@@ -8,7 +8,7 @@ import { PassaroInterface } from '@/interfaces/PassaroInterface';
 import StudentModal from '@/components/modals/PassaroModal';
 import PassaroModal from '@/components/modals/PassaroModal';
 
-export default function StudentsListScreen() {
+export default function PassaroListScreen() {
   const [passaros, setPassaros] = useState<PassaroInterface[]>([]);
   const [modalvisivel, setModalVisivel] = useState<boolean>(false);
 
@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
   },
   headerButton: {
     fontWeight: 'bold',
-    fontSize: 50,
+    fontSize: 30,
     paddingHorizontal: 20,
   },
 });

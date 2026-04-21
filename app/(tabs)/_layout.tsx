@@ -31,9 +31,9 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="Passaros"
+        name="PassaroListScreen"
         options={{
-          title: 'Passaros',
+          title: 'PassaroListScreen',
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
         }}
       />
