@@ -1,34 +1,17 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Text, View, StyleSheet,TouchableOpacity, Modal, TextInput } from "react-native";
 import { useState } from "react";
-import { GaiolaInterface } from "@/interfaces/GaiolaInterface";
-import { PassaroInterface } from "@/interfaces/PassaroInterface";
 
-export type PassaroModalProps = {
+export type GaiolaModalProps = {
     visivel: boolean;
-    adicionar: (apelido: string, sexo: string, id: number) => void;
+    adicionar: (nome: string, material: string, tipo: string) => void;
     cancelar: () => void;
-    deletar: (id: number) => void;
-    passaro?: PassaroInterface;
 };
 
-export default function PassaroModal({visivel, adicionar, cancelar, deletar, passaro}: PassaroModalProps) {
-    const [apelido, setApelido] = useState('');
-    const [sexo, setSexo] = useState('');
-    const [id, setId] = useState<number>(0);
-
-    useEffect(() => {
-      if(passaro){
-          setApelido(passaro.apelido);
-          setSexo(passaro.sexo);
-          setId(passaro.id_passaro);
-      } else {
-          setApelido('');
-          setSexo('');
-          setId(0);
-  
-      }
-    }, [passaro])
+export default function GaiolaModal({visivel, adicionar, cancelar}: GaiolaModalProps) {
+    const [nome, setNome] = useState('');
+    const [material, setMaterial] = useState('');
+    const [tipo, setTipo] = useState('');
 
   return (
     <Modal visible={visivel} animationType='fade' transparent={true} onRequestClose={() => {}}>
@@ -36,24 +19,30 @@ export default function PassaroModal({visivel, adicionar, cancelar, deletar, pas
         <View style={styles.boxContainer}>
           <TextInput
             style={styles.boxInput}
-            placeholder='Apelido'
-            value={apelido}
-            onChangeText={text => setApelido(text)}
+            placeholder='Nome'
+            value={nome}
+            onChangeText={text => setNome(text)}
             autoFocus
           />
 
           <TextInput
             style={styles.boxInput}
-            value={sexo}
-            onChangeText={text => setSexo(text)}
-            placeholder='Sexo'
+            value={material}
+            onChangeText={text => setMaterial(text)}
+            placeholder='Material'
           />
 
+          <TextInput
+            style={styles.boxInput}
+            value={tipo}
+            onChangeText={text => setTipo(text)}
+            placeholder='Tipo'
+          />
 
           <View style={styles.buttonContainer}>
-            <TouchableOpacity style={styles.buttonAdd} onPress={() => adicionar(apelido, sexo, id)}>
+            <TouchableOpacity style={styles.buttonAdd} onPress={() => adicionar(nome, material, tipo)}>
               <Text style={styles.buttonText}>
-                Salvar
+                Add
               </Text>
             </TouchableOpacity>
             
@@ -62,14 +51,6 @@ export default function PassaroModal({visivel, adicionar, cancelar, deletar, pas
                 Cancel
               </Text>
             </TouchableOpacity>
-
-            <TouchableOpacity style={styles.buttonDelete} onPress={() => deletar(id)} disabled = {id <= 0}>
-              <Text style={styles.buttonText}>
-                Deletar
-              </Text>
-            </TouchableOpacity>
-
-
           </View>
         </View>
       </View>
@@ -105,15 +86,6 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   buttonCancel: {
-    backgroundColor: 'orange',
-    borderRadius: 5,
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    margin: 10,
-    padding: 20,
-  },
-  buttonDelete: {
     backgroundColor: 'red',
     borderRadius: 5,
     flex: 1,

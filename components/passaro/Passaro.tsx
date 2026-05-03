@@ -5,20 +5,13 @@ import { StyleSheet, Text, View } from "react-native";
 // "passaro" é o nome do meu componente e "props" é a abreviacao de properties
 export type PassaroProps = {
     apelido: string;
-    especie: string;
-    anilha: string;
-
-    idade: number;
     sexo: string;
 }
 
-export default function Passaro({apelido, especie, anilha, idade, sexo} : PassaroProps){
+export default function Passaro({apelido, sexo} : PassaroProps){
     return(<
         View style={styles.box}>
             <Text style={styles.title}>{apelido}</Text>
-            <Text style={styles.subTitle}>{especie}</Text>
-            <Text style={styles.subTitle}>{anilha}</Text>
-            <Text style={styles.subTitle}>{`${idade}`}</Text>
             <Text style={styles.subTitle}>{sexo}</Text>
         </View>)
     ;

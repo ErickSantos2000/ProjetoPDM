@@ -37,6 +37,13 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
         }}
       />
+      <Tabs.Screen
+        name="GaiolaListScreen"
+        options={{
+          title: 'GaiolaListScreen',
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="grid.fill" color={color} />,
+        }}
+      />
     </Tabs>
   );
 }
