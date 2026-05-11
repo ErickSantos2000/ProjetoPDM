@@ -12,46 +12,52 @@ export default function PassaroListScreen() {
   const [modalvisivel, setModalVisivel] = useState<boolean>(false);
   const [selectPassaro, setSelectPassaro] = useState<PassaroInterface>();
 
+ 
   const adicionar = (apelido: string, sexo: string, id: number) => {
 
+    // Se não tem id ou o id é zero, um novo registro sera criado
     if(!id || id <= 0){
       const newPassaro: PassaroInterface = {
-        id_passaro: Math.random() * 1000,
+        id_passaro: Math.random() * 1000, 
         apelido: apelido,
         sexo: sexo,
       };
 
+      // cria uma nova lista com os passaros que ja existiam mais o novo
       const PassaroPlus: PassaroInterface[] = [...passaros, newPassaro];
     
-      setPassaros(PassaroPlus);
+      setPassaros(PassaroPlus); // Atualiza a tela
     } else {
+      // se já tem id, um passaro na lista sera aditado 
       passaros.forEach(passaro => {
         if(passaro.id_passaro == id) {
-          passaro.apelido = apelido;
+          passaro.apelido = apelido; // altera os dados somente na memoria
           passaro.sexo = sexo;
         }
       });
 
-      // atualiza o estado da lista
+      // atualiza a estado da lista
       setPassaros([...passaros]); 
     }
     
-    setModalVisivel(false);
+    setModalVisivel(false); // fecha o modal apos salvar
   };
 
+  // função para remover um passaro da lista
   const deletar = (id: number) => {
-    const novoPassaro: Array<PassaroInterface> = [];
+    const novalista: Array<PassaroInterface> = [];
 
+    // percorre a lista e guarda apenas os passaros que não são o que queremos deletar
     for(let i = 0; i < passaros.length; i++){
       const passaro = passaros[i];
 
       if(passaro.id_passaro != id){
-        novoPassaro.push(passaro)
+        novalista.push(passaro)
       }
     }
 
-    setPassaros(novoPassaro);
-    setModalVisivel(false);
+    setPassaros(novalista); // atualiza o estada da lista na tela sem o item deletado
+    setModalVisivel(false);   // Fecha o modal
   }
 
   const openModal = () => {
@@ -87,8 +93,7 @@ export default function PassaroListScreen() {
               sexo={passaro.sexo} 
             />
           </TouchableOpacity>
-          
-        ))}
+          ))}
       </ThemedView>
 
       <PassaroModal

@@ -10,31 +10,64 @@ import GaiolaModal from '@/components/modals/GaiolaModal';
 export default function GaiolaListScreen() {
   const [gaiolas, setGaiolas] = useState<GaiolaInterface[]>([]);
   const [modalvisivel, setModalVisivel] = useState<boolean>(false);
+  const [selectGaiola, setSelectGaiola] = useState<GaiolaInterface>();
 
-  const adicionar = (nome: string, material: string, tipo: string) => {
-    const newGaiola: GaiolaInterface = {
-        id_gaiola: Math.random() * 1000,
-        nome: nome,
-        material: material,
-        tipo: tipo
-    };
+  const adicionar = (nome: string, material: string, tipo: string, id: number) => {
+    if(!id || id <= 0){
+      const newGaiola: GaiolaInterface = {
+          id_gaiola: Math.random() * 1000,
+          nome: nome,
+          material: material,
+          tipo: tipo
+      };
 
-    const GaiolaPlus: GaiolaInterface[] = [
-      ...gaiolas,
-      newGaiola
-    ];
+      const GaiolaPlus: GaiolaInterface[] = [
+        ...gaiolas,
+        newGaiola
+      ];
 
-    setGaiolas(GaiolaPlus);
+      setGaiolas(GaiolaPlus);
+    } else {
+      gaiolas.forEach(gaiola => {
+        if(gaiola.id_gaiola == id) {
+          gaiola.nome = nome;
+          gaiola.material = material;
+          gaiola.tipo = tipo;
+        }
+      });
+      setGaiolas([...gaiolas]);
+    }
     setModalVisivel(false);
   };
 
+  const deletar = (id: number) => {
+    const novalista: Array<GaiolaInterface> = [];
+
+    for(let i = 0; i < gaiolas.length; i++){
+      const gaiola = gaiolas[i];
+
+      if(gaiola.id_gaiola != id){
+        novalista.push(gaiola)
+      }
+    }
+
+    setGaiolas(novalista);
+    setModalVisivel(false);
+  }
+
   const openModal = () => {
+    setSelectGaiola(undefined)
     setModalVisivel(true);
   };
 
   const closeModal = () => {
     setModalVisivel(false);
   };
+
+  const openEditModal = (selectGaiola: GaiolaInterface) => {
+    setSelectGaiola(selectGaiola)
+    setModalVisivel(true)
+  }
 
   return (
     <MyScrollView
@@ -48,12 +81,14 @@ export default function GaiolaListScreen() {
 
       <ThemedView style={styles.container}>
         {gaiolas.map(gaiola => (
-          <Gaiola 
-            key={gaiola.id_gaiola} 
-            nome={gaiola.nome} 
-            material={gaiola.material} 
-            tipo={gaiola.tipo} 
-          />
+          <TouchableOpacity onPress={() => openEditModal(gaiola)}>
+            <Gaiola 
+              key={gaiola.id_gaiola} 
+              nome={gaiola.nome} 
+              material={gaiola.material} 
+              tipo={gaiola.tipo} 
+            />
+          </TouchableOpacity>
         ))}
       </ThemedView>
 
@@ -61,6 +96,8 @@ export default function GaiolaListScreen() {
         visivel={modalvisivel}
         cancelar={closeModal}
         adicionar={adicionar}
+        deletar={deletar}
+        gaiola={selectGaiola}
       />
     </MyScrollView>
   );

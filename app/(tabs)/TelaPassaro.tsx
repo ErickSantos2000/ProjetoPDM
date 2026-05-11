@@ -3,15 +3,14 @@ import { Text, View, StyleSheet,TouchableOpacity, Modal, TextInput } from "react
 import { useState } from "react";
 import { PassaroInterface } from "@/interfaces/PassaroInterface";
 
-export type PassaroModalProps = {
-    visivel: boolean;
+export type PassaroTelaProps = {
     adicionar: (apelido: string, sexo: string, id: number) => void;
     cancelar: () => void;
     deletar: (id: number) => void;
     passaro?: PassaroInterface;
 };
 
-export default function PassaroModal({visivel, adicionar, cancelar, deletar, passaro}: PassaroModalProps) {
+export default function TelaPassaro({ adicionar, cancelar, deletar, passaro}: PassaroTelaProps) {
     const [apelido, setApelido] = useState('');
     const [sexo, setSexo] = useState('');
     const [id, setId] = useState<number>(0);
@@ -32,9 +31,8 @@ export default function PassaroModal({visivel, adicionar, cancelar, deletar, pas
     }, [passaro]) // [passaro] indica que o monitor deve rodar sempre que o passaro selecionado mudar
 
   return (
-    <Modal visible={visivel} animationType='fade' transparent={true} onRequestClose={() => {}}>
+   
       <View style={styles.container}>
-        <View style={styles.boxContainer}>
 
           <TextInput
             style={styles.boxInput}
@@ -75,24 +73,13 @@ export default function PassaroModal({visivel, adicionar, cancelar, deletar, pas
 
           </View>
         </View>
-      </View>
-    </Modal>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
-    alignContent: 'center',
-    justifyContent: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.7)',
     flex: 1,
-  },
-  boxContainer: {
-    backgroundColor: '#FFF',
-    borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-    margin: 20,
   },
   buttonText: {
     fontWeight: 'bold',

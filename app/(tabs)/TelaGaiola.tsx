@@ -1,60 +1,61 @@
 import React, { useEffect } from "react";
 import { Text, View, StyleSheet,TouchableOpacity, Modal, TextInput } from "react-native";
 import { useState } from "react";
-import { PassaroInterface } from "@/interfaces/PassaroInterface";
+import { GaiolaInterface } from "@/interfaces/GaiolaInterface";
 
-export type PassaroModalProps = {
-    visivel: boolean;
-    adicionar: (apelido: string, sexo: string, id: number) => void;
+export type GaiolaTelaProps = {
+    adicionar: (nome: string, material: string, tipo: string, id: number) => void;
     cancelar: () => void;
     deletar: (id: number) => void;
-    passaro?: PassaroInterface;
+    gaiola?: GaiolaInterface;
 };
 
-export default function PassaroModal({visivel, adicionar, cancelar, deletar, passaro}: PassaroModalProps) {
-    const [apelido, setApelido] = useState('');
-    const [sexo, setSexo] = useState('');
+export default function TelaGaiola({ adicionar, cancelar, deletar, gaiola}: GaiolaTelaProps) {
+    const [nome, setNome] = useState('');
+    const [material, setMaterial] = useState('');
+    const [tipo, setTipo] = useState('');
     const [id, setId] = useState<number>(0);
 
-    // O useEffect monitora o objeto passaro que vem da tela de listagem
     useEffect(() => {
-      if(passaro){
-          // se clicar em um passaro existente, é preenchido o formulario com os dados dele
-          setApelido(passaro.apelido);
-          setSexo(passaro.sexo);
-          setId(passaro.id_passaro);
+      if(gaiola){
+          setNome(gaiola.nome);
+          setMaterial(gaiola.material);
+          setTipo(gaiola.tipo);
+          setId(gaiola.id_gaiola);
       } else {
-          // Se clicamos no botão "+", o formulario limpado para um novo cadastro
-          setApelido('');
-          setSexo('');
+          setNome('');
+          setMaterial('');
+          setTipo('');
           setId(0);
       }
-    }, [passaro]) // [passaro] indica que o monitor deve rodar sempre que o passaro selecionado mudar
+    }, [gaiola])
 
   return (
-    <Modal visible={visivel} animationType='fade' transparent={true} onRequestClose={() => {}}>
       <View style={styles.container}>
-        <View style={styles.boxContainer}>
-
           <TextInput
             style={styles.boxInput}
-            placeholder='Apelido'
-            value={apelido}
-            onChangeText={text => setApelido(text)}
+            placeholder='Nome'
+            value={nome}
+            onChangeText={text => setNome(text)}
             autoFocus
           />
 
           <TextInput
             style={styles.boxInput}
-            value={sexo}
-            onChangeText={text => setSexo(text)}
-            placeholder='Sexo'
+            value={material}
+            onChangeText={text => setMaterial(text)}
+            placeholder='Material'
           />
 
+          <TextInput
+            style={styles.boxInput}
+            value={tipo}
+            onChangeText={text => setTipo(text)}
+            placeholder='Tipo'
+          />
 
           <View style={styles.buttonContainer}>
-         
-            <TouchableOpacity style={styles.buttonAdd} onPress={() => adicionar(apelido, sexo, id)}>
+            <TouchableOpacity style={styles.buttonAdd} onPress={() => adicionar(nome, material, tipo, id)}>
               <Text style={styles.buttonText}>
                 Salvar
               </Text>
@@ -71,29 +72,18 @@ export default function PassaroModal({visivel, adicionar, cancelar, deletar, pas
                 Deletar
               </Text>
             </TouchableOpacity>
-
-
           </View>
         </View>
-      </View>
-    </Modal>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
-    alignContent: 'center',
-    justifyContent: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.7)',
+
     flex: 1,
   },
-  boxContainer: {
-    backgroundColor: '#FFF',
-    borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-    margin: 20,
-  },
+
   buttonText: {
     fontWeight: 'bold',
     color: '#FFF',

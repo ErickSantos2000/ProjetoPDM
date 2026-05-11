@@ -1,17 +1,35 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Text, View, StyleSheet,TouchableOpacity, Modal, TextInput } from "react-native";
 import { useState } from "react";
+import { GaiolaInterface } from "@/interfaces/GaiolaInterface";
 
 export type GaiolaModalProps = {
     visivel: boolean;
-    adicionar: (nome: string, material: string, tipo: string) => void;
+    adicionar: (nome: string, material: string, tipo: string, id: number) => void;
     cancelar: () => void;
+    deletar: (id: number) => void;
+    gaiola?: GaiolaInterface;
 };
 
-export default function GaiolaModal({visivel, adicionar, cancelar}: GaiolaModalProps) {
+export default function GaiolaModal({visivel, adicionar, cancelar, deletar, gaiola}: GaiolaModalProps) {
     const [nome, setNome] = useState('');
     const [material, setMaterial] = useState('');
     const [tipo, setTipo] = useState('');
+    const [id, setId] = useState<number>(0);
+
+    useEffect(() => {
+      if(gaiola){
+          setNome(gaiola.nome);
+          setMaterial(gaiola.material);
+          setTipo(gaiola.tipo);
+          setId(gaiola.id_gaiola);
+      } else {
+          setNome('');
+          setMaterial('');
+          setTipo('');
+          setId(0);
+      }
+    }, [gaiola])
 
   return (
     <Modal visible={visivel} animationType='fade' transparent={true} onRequestClose={() => {}}>
@@ -40,15 +58,21 @@ export default function GaiolaModal({visivel, adicionar, cancelar}: GaiolaModalP
           />
 
           <View style={styles.buttonContainer}>
-            <TouchableOpacity style={styles.buttonAdd} onPress={() => adicionar(nome, material, tipo)}>
+            <TouchableOpacity style={styles.buttonAdd} onPress={() => adicionar(nome, material, tipo, id)}>
               <Text style={styles.buttonText}>
-                Add
+                Salvar
               </Text>
             </TouchableOpacity>
             
             <TouchableOpacity style={styles.buttonCancel} onPress={() => cancelar()}>
               <Text style={styles.buttonText}>
                 Cancel
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.buttonDelete} onPress={() => deletar(id)} disabled = {id <= 0}>
+              <Text style={styles.buttonText}>
+                Deletar
               </Text>
             </TouchableOpacity>
           </View>
@@ -86,6 +110,15 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   buttonCancel: {
+    backgroundColor: 'orange',
+    borderRadius: 5,
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    margin: 10,
+    padding: 20,
+  },
+  buttonDelete: {
     backgroundColor: 'red',
     borderRadius: 5,
     flex: 1,
