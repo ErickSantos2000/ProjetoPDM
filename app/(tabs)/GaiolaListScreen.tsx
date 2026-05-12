@@ -3,14 +3,50 @@ import { StyleSheet, TouchableOpacity, Text} from 'react-native';
 import { ThemedView } from '@/components/themed-view';
 import Gaiola from '@/components/gaiola/Gaiola';
 import MyScrollView from '@/components/MyScrollView';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { GaiolaInterface } from '@/interfaces/GaiolaInterface';
 import GaiolaModal from '@/components/modals/GaiolaModal';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Location from 'expo-location';
 
 export default function GaiolaListScreen() {
   const [gaiolas, setGaiolas] = useState<GaiolaInterface[]>([]);
   const [modalvisivel, setModalVisivel] = useState<boolean>(false);
   const [selectGaiola, setSelectGaiola] = useState<GaiolaInterface>();
+
+  const [location, setLocation] = useState({});
+  const [errorMsg, setErrorMsg] = useState('');
+
+  useEffect(() => {
+    async function getData() {
+      try {
+        const data = await AsyncStorage.getItem("@GaiolaApp:gaiolas");
+        const gaiolasData = data != null ? JSON.parse(data) : [];
+        setGaiolas(gaiolasData);
+      } catch (e) {}
+    }
+    getData();
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        setErrorMsg('Permission to access location was denied');
+        return;
+      }
+
+      let location = await Location.getCurrentPositionAsync({});
+      setLocation(location);
+    })();
+  }, []);
+
+  let text = 'Waiting..';
+  if (errorMsg) {
+    text = errorMsg;
+  } else if (location) {
+    text = JSON.stringify(location);
+  }
 
   const adicionar = (nome: string, material: string, tipo: string, id: number) => {
     if(!id || id <= 0){
@@ -21,12 +57,9 @@ export default function GaiolaListScreen() {
           tipo: tipo
       };
 
-      const GaiolaPlus: GaiolaInterface[] = [
-        ...gaiolas,
-        newGaiola
-      ];
-
+      const GaiolaPlus: GaiolaInterface[] = [...gaiolas, newGaiola];
       setGaiolas(GaiolaPlus);
+      AsyncStorage.setItem("@GaiolaApp:gaiolas", JSON.stringify(GaiolaPlus));
     } else {
       gaiolas.forEach(gaiola => {
         if(gaiola.id_gaiola == id) {
@@ -36,6 +69,7 @@ export default function GaiolaListScreen() {
         }
       });
       setGaiolas([...gaiolas]);
+      AsyncStorage.setItem("@GaiolaApp:gaiolas", JSON.stringify(gaiolas));
     }
     setModalVisivel(false);
   };
@@ -52,6 +86,7 @@ export default function GaiolaListScreen() {
     }
 
     setGaiolas(novalista);
+    AsyncStorage.setItem("@GaiolaApp:gaiolas", JSON.stringify(novalista));
     setModalVisivel(false);
   }
 
@@ -77,13 +112,13 @@ export default function GaiolaListScreen() {
         <TouchableOpacity onPress={() => openModal()}>
           <Text style={styles.headerButton}>+</Text>
         </TouchableOpacity>
+        <Text style={styles.headerButton}>{text}</Text>
       </ThemedView>
 
       <ThemedView style={styles.container}>
         {gaiolas.map(gaiola => (
-          <TouchableOpacity onPress={() => openEditModal(gaiola)}>
+          <TouchableOpacity key={gaiola.id_gaiola} onPress={() => openEditModal(gaiola)}>
             <Gaiola 
-              key={gaiola.id_gaiola} 
               nome={gaiola.nome} 
               material={gaiola.material} 
               tipo={gaiola.tipo} 

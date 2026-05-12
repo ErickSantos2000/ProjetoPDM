@@ -3,16 +3,51 @@ import { StyleSheet, TouchableOpacity, Text} from 'react-native';
 import { ThemedView } from '@/components/themed-view';
 import Passaro from '@/components/passaro/Passaro';
 import MyScrollView from '@/components/MyScrollView';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { PassaroInterface } from '@/interfaces/PassaroInterface';
 import PassaroModal from '@/components/modals/PassaroModal';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Location from 'expo-location';
 
 export default function PassaroListScreen() {
   const [passaros, setPassaros] = useState<PassaroInterface[]>([]);
   const [modalvisivel, setModalVisivel] = useState<boolean>(false);
   const [selectPassaro, setSelectPassaro] = useState<PassaroInterface>();
 
- 
+  const [location, setLocation] = useState({});
+  const [errorMsg, setErrorMsg] = useState('');
+
+  useEffect(() => {
+    async function getData() {
+      try {
+        const data = await AsyncStorage.getItem("@PassaroApp:passaros");
+        const passarosData = data != null ? JSON.parse(data) : [];
+        setPassaros(passarosData);
+      } catch (e) {}
+    }
+    getData();
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        setErrorMsg('Permission to access location was denied');
+        return;
+      }
+
+      let location = await Location.getCurrentPositionAsync({});
+      setLocation(location);
+    })();
+  }, []);
+
+  let text = 'Waiting..';
+  if (errorMsg) {
+    text = errorMsg;
+  } else if (location) {
+    text = JSON.stringify(location);
+  }
+
   const adicionar = (apelido: string, sexo: string, id: number) => {
 
     // Se não tem id ou o id é zero, um novo registro sera criado
@@ -25,10 +60,11 @@ export default function PassaroListScreen() {
 
       // cria uma nova lista com os passaros que ja existiam mais o novo
       const PassaroPlus: PassaroInterface[] = [...passaros, newPassaro];
-    
-      setPassaros(PassaroPlus); // Atualiza a tela
+
+      setPassaros(PassaroPlus); // atualiza a tela
+      AsyncStorage.setItem("@PassaroApp:passaros", JSON.stringify(PassaroPlus));
     } else {
-      // se já tem id, um passaro na lista sera aditado 
+      // se ja   tem id, um passaro na lista sera aditado 
       passaros.forEach(passaro => {
         if(passaro.id_passaro == id) {
           passaro.apelido = apelido; // altera os dados somente na memoria
@@ -38,8 +74,9 @@ export default function PassaroListScreen() {
 
       // atualiza a estado da lista
       setPassaros([...passaros]); 
+      AsyncStorage.setItem("@PassaroApp:passaros", JSON.stringify(passaros));
     }
-    
+
     setModalVisivel(false); // fecha o modal apos salvar
   };
 
@@ -57,6 +94,7 @@ export default function PassaroListScreen() {
     }
 
     setPassaros(novalista); // atualiza o estada da lista na tela sem o item deletado
+    AsyncStorage.setItem("@PassaroApp:passaros", JSON.stringify(novalista));
     setModalVisivel(false);   // Fecha o modal
   }
 
@@ -77,18 +115,18 @@ export default function PassaroListScreen() {
   return (
     <MyScrollView
       headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}>
-      
+
       <ThemedView style={styles.headerContainer}>
         <TouchableOpacity onPress={() => openModal()}>
           <Text style={styles.headerButton}>+</Text>
         </TouchableOpacity>
+        <Text style={styles.headerButton}>{text}</Text>
       </ThemedView>
 
       <ThemedView style={styles.container}>
         {passaros.map(passaro => (
-          <TouchableOpacity onPress={() => openEditModal(passaro)}>
+          <TouchableOpacity key={passaro.id_passaro} onPress={() => openEditModal(passaro)}>
             <Passaro 
-              key={passaro.id_passaro} 
               apelido={passaro.apelido} 
               sexo={passaro.sexo} 
             />
@@ -106,7 +144,6 @@ export default function PassaroListScreen() {
     </MyScrollView>
   );
 }
-  
 
 const styles = StyleSheet.create({
   titleContainer: {

@@ -69,8 +69,6 @@ export default function TelaPassaro({ adicionar, cancelar, deletar, passaro}: Pa
                 Deletar
               </Text>
             </TouchableOpacity>
-
-
           </View>
         </View>
   );
